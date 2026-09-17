@@ -141,6 +141,13 @@ jobs:
           cmake_config: -G "Visual Studio 17 2022" -A "x64" -DMATERIALX_BUILD_SHARED_LIBS=ON
           upload_shaders: ON
 
+        - name: Windows_VS2022_x64_SharedLibs_MinGW
+          os: windows-2022
+          architecture: x64
+          python: None
+          cmake_config: -G "MinGW Makefiles" -A "x64" -DMATERIALX_BUILD_SHARED_LIBS=ON
+          upload_shaders: ON
+
     steps:
     - name: Sync Repository
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -180,6 +187,11 @@ jobs:
         Add-Content $env:GITHUB_PATH "$PWD/build/installed/bin"
         # MSVC /MP already parallelizes within each project, so build projects serially.
         Add-Content $env:GITHUB_ENV "CMAKE_BUILD_PARALLEL_LEVEL=1"
+
+    - name: Install MinGW
+      if: runner.os == 'Windows'
+      run:
+        choco install mingw
 
     - name: Install OpenImageIO
       if: env.IS_EXTENDED_BUILD == 'true' && matrix.extended_build_oiio == 'ON' && runner.os == 'Windows'
